@@ -74,13 +74,14 @@ export class WishController {
   }
 
   @Patch(':id')
-  @UseGuards(WishAuthorGuard)
   update(@Param('id') id: string,
-    @Body() updatedWish: UpdateWishDto) {
+    @Body() updatedWish: UpdateWishDto,
+    @AuthUser() user: User
+  ) {
     return this.wishService.updateOne({
       where: { id: +id },
       relations: ['owner'],
-    }, updatedWish);
+    }, updatedWish, user.id);
   }
 
   @Post(":id/copy")
@@ -96,10 +97,12 @@ export class WishController {
   }
 
   @Delete(':id')
-  @UseGuards(WishAuthorGuard)
-  remove(@Param('id') id: string) {
+  remove(
+    @Param('id') id: string,
+    @AuthUser() user: User
+  ) {
     try {
-      return this.wishService.removeOne(+id);
+      return this.wishService.removeOne({ id: +id }, user.id);
     } catch (error) {
       throw new Error('Ошибка в удалении подарка')
     }

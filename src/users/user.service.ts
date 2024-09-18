@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository, DataSource, FindOneOptions, FindOptionsWhere, DeleteResult } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -50,7 +50,13 @@ export class UserService {
     return this.userRepository.save({ ...user, ...updateUserDto })
   }
 
-  async removeOne(query: Partial<User>): Promise<DeleteResult> {
+  async removeOne(query: Partial<User>, userId: number): Promise<DeleteResult> {
+    const { id } = query;
+    const user = await this.findOne({
+      where: { id }
+    })
+    if (user.id === userId) throw new ForbiddenException('Удаление запрещено');
+
     return await this.userRepository.delete(query);
   }
 }

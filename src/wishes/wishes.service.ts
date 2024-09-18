@@ -1,9 +1,8 @@
-import { Injectable, NotFoundException, Param, UseGuards } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException, Param, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wishes.entity';
 import { DeleteResult, FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wishes.dto';
-import { IWishPaginator } from 'src/interfaces';
 import { UserService } from 'src/users/user.service';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateWishDto } from './dto/update-wish.dto';
@@ -29,20 +28,26 @@ export class WishService {
   }
 
   async find(query: FindManyOptions<Wish>): Promise<Wish[]> {
-    console.log("find query: ", query)
     return await this.wishRepository.find(query);
   }
 
-  // { where: { id: parseInt(id, 10) } }
-
-  async updateOne(query: FindOneOptions<Wish>, body: UpdateWishDto): Promise<Wish> {
-    console.log(body)
-    const entity = await this.findOne(query);
-    return this.wishRepository.save({ ...entity, ...body })
+  async updateOne(query: FindOneOptions<Wish>, body: UpdateWishDto, userId: number): Promise<Wish> {
+    try {
+      const entity = await this.findOne(query);
+      if (entity.owner.id !== userId) throw new ForbiddenException('Редактирование чужих подарков запрещено');
+      return this.wishRepository.save({ ...entity, ...body })
+    } catch (error) {
+      throw new HttpException("Ошибка при обновлении", HttpStatus.BAD_REQUEST);
+    }
   }
 
-  async removeOne(id: number): Promise<DeleteResult> {
-    return await this.wishRepository.delete(id);
+  async removeOne(query: Partial<Wish>, userId: number): Promise<DeleteResult> {
+    const { id } = query;
+    const wish = await this.findOne({
+      where: { id }, relations: ['owner']
+    })
+    if (wish.owner.id !== userId) throw new ForbiddenException('Удаление чужих подарков запрещено');
+    return await this.wishRepository.delete(query);
   }
 
   async copyWish(id: string, user: User) {

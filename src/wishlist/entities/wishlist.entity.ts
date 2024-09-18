@@ -42,7 +42,7 @@ export class WishList {
   @ManyToOne(() => User, (user) => user.wishlist)
   owner: UserPublicProfileResponseDto
 
-  //    содержит набор ссылок на подарки.
+  // содержит набор ссылок на подарки.
   @IsEmpty()
   @ManyToMany(() => Wish, (wish) => wish.wishlist)
   items: Wish[]

@@ -51,19 +51,17 @@ export class UserController {
   }
 
   @UseGuards(AuthGuardJWT)
-  @Get('me/wishes')
-  async findMyWish(@AuthUser() user: User): Promise<Wish[]> {
-    return await this.wishService.find(
-      { where: { id: user.id }, relations: ['owner'], }
-    );
-  }
-
-  @UseGuards(AuthGuardJWT)
   @Patch('me')
   @UseFilters(EntityNotFoundFilter)
   async updateOne(@AuthUser() user: User, @Body() updateUserDto: UpdateUserDto) {
     const { id } = user;
     return this.update(String(id), updateUserDto)
+  }
+
+  @UseGuards(AuthGuardJWT)
+  @Get('me/wishes')
+  async findMyWish(@AuthUser() user: User): Promise<Wish[]> {
+    return await this.getUserWishes(user, '')
   }
 
   @UseGuards(AuthGuardJWT)
@@ -85,11 +83,14 @@ export class UserController {
 
   @UseGuards(AuthGuardJWT)
   @Get(':username/wishes')
-  getWishes(
+  getUserWishes(
     @AuthUser() user: User,
     @Param('username') username: string
   ) {
-    // Временно нахожу "подарки", которые принадлежат юзеру. Далее заменить на вишлист юзера
+
+    if (username === '') {
+      username = user.username
+    }
 
     return this.wishService.find(
       { where: { owner: { username } } }
@@ -103,9 +104,8 @@ export class UserController {
     });
   }
 
-  @UseGuards(AuthGuardJWT)
-  // @UseGuards(ValidUser)
   @Patch(':id')
+  @UseGuards(AuthGuardJWT)
   update(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto
@@ -116,10 +116,12 @@ export class UserController {
     );
   }
 
-  @UseGuards(AuthGuardJWT)
   @Delete(':id')
-  // @UseGuards(ValidUser)
-  remove(@Param('id') id: string) {
-    return this.userService.removeOne({ id: +id });
+  @UseGuards(AuthGuardJWT)
+  remove(
+    @Param('id') id: string,
+    @AuthUser() user: User
+  ) {
+    return this.userService.removeOne({ id: +id }, user.id);
   }
 }

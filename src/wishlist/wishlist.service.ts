@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { WishList } from './entities/wishlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
@@ -20,6 +20,14 @@ export class WishlistService {
     const wishlists = await this.wishlistsRepo.find();
     console.log(wishlists)
     return wishlists;
+  }
+
+  async findOne(query: FindOneOptions<WishList>): Promise<WishList> {
+    return await this.wishlistsRepo.findOne(query);
+  }
+
+  async find(query: FindManyOptions<WishList>): Promise<WishList[]> {
+    return await this.wishlistsRepo.find(query);
   }
 
   async create(createWishlistDto: CreateWishlistDto, userId: number) {
