@@ -4,7 +4,7 @@ import { UserPublicProfileResponseDto } from "src/users/dto/public-profile-respo
 import { User } from "src/users/entities/user.entity";
 import { LENGTH_OF_COLUMNS } from "src/vars";
 import { WishList } from "src/wishlist/entities/wishlist.entity";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, ManyToMany, JoinTable } from "typeorm";
 
 @Entity()
 export class Wish {
@@ -53,8 +53,11 @@ export class Wish {
   offers: Offer[]
 
   @IsEmpty()
-  @ManyToOne(() => WishList, (wishlist) => wishlist.items)
-  wishlist: WishList
+  @ManyToMany(() => WishList, (wishlist) => wishlist.items)
+  @JoinTable({
+    name: 'wishPartial',
+  })
+  wishlists: WishList[]
 
   @Column({
     default: 0

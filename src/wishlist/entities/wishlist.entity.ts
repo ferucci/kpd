@@ -44,6 +44,6 @@ export class WishList {
 
   // содержит набор ссылок на подарки.
   @IsEmpty()
-  @ManyToMany(() => Wish, (wish) => wish.wishlist)
+  @ManyToMany(() => Wish, (wish) => wish.wishlists)
   items: Wish[]
 }

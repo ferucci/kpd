@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsString } from "class-validator"
+import { IsArray, IsNotEmpty, IsString } from "class-validator"
 import { Wish } from "src/wishes/entities/wishes.entity"
+import { WishPartial } from "src/wishes/entities/wishPartial.entity"
 
 
 export class CreateWishlistDto {
@@ -11,5 +12,5 @@ export class CreateWishlistDto {
   @IsNotEmpty()
   image: string
 
-  itemsId: Wish[]
+  items: Wish[]
 }

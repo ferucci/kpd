@@ -68,8 +68,4 @@ export class User {
   @IsEmpty()
   @OneToMany(() => WishList, (wishlist) => wishlist.owner)
   wishlist: WishList[]
-
-  @Column({ default: 'user' })
-  @Exclude()
-  role: string
 }

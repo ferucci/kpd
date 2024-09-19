@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { WishlistService } from './wishlist.service';
 import { AuthUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -7,12 +7,19 @@ import { AuthGuardJWT } from 'src/auth/guards';
 
 @Controller('wishlistlists')
 export class WishlistController {
-  constructor(private readonly wishlistService: WishlistService) { }
+  constructor(
+    private readonly wishlistService: WishlistService,
+  ) { }
 
   @Get()
-  async findAll() {
-    const wishlist = await this.wishlistService.find({});
-    console.log('my wishlists : ', wishlist)
+  @UseGuards(AuthGuardJWT)
+  async findAll(
+    @AuthUser() user: User
+  ) {
+
+    const wishlist = await this.wishlistService.find({
+      where: { owner: { id: user.id } }, relations: ['owner']
+    });
     return wishlist;
   }
 
@@ -21,12 +28,12 @@ export class WishlistController {
     @Param('id') id: string
   ) {
     return this.wishlistService.findOne({
-      where: { id: +id }
+      where: { id: +id }, relations: ['owner', 'items']
     })
   }
 
-  @UseGuards(AuthGuardJWT)
   @Post()
+  @UseGuards(AuthGuardJWT)
   create(
     @Body() createWishlistDto: CreateWishlistDto,
     @AuthUser() user: User
@@ -38,5 +45,8 @@ export class WishlistController {
     }
   }
 
-
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.wishlistService.removeOne({ id: +id });
+  }
 }
