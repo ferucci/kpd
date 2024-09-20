@@ -1,11 +1,10 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { WishService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wishes.dto';
 import { AuthUser } from 'src/common/decorators/user.decorator';
 import { User } from 'src/users/entities/user.entity';
 import { AuthGuardJWT } from 'src/auth/guards';
 import { Wish } from './entities/wishes.entity';
-import { WishAuthorGuard } from './guards';
 import { UpdateWishDto } from './dto/update-wish.dto';
 
 // Временно на все роуты AuthGuardJWT, далее нужно исправить, чтоб на last и top не распространялись
@@ -17,7 +16,6 @@ export class WishController {
   ) { }
 
   @Post()
-  // @Roles(Role.ADMIN)
   create(@Body() createWishDto: CreateWishDto, @AuthUser() user: User) {
     try {
       return this.wishService.create(createWishDto, user.id);
@@ -104,7 +102,7 @@ export class WishController {
     try {
       return this.wishService.removeOne({ id: +id }, user.id);
     } catch (error) {
-      throw new Error('Ошибка в удалении подарка')
+      throw new BadRequestException('Ошибка в удалении подарка')
     }
   }
 

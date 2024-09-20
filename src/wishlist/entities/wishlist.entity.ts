@@ -3,8 +3,7 @@ import { UserPublicProfileResponseDto } from "src/users/dto/public-profile-respo
 import { User } from "src/users/entities/user.entity";
 import { DEFAULT_VALUE, LENGTH_OF_COLUMNS } from "src/vars";
 import { Wish } from "src/wishes/entities/wishes.entity";
-import { WishPartial } from "src/wishes/entities/wishPartial.entity";
-import { Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity()
 export class WishList {
@@ -44,6 +43,22 @@ export class WishList {
 
   // содержит набор ссылок на подарки.
   @IsEmpty()
-  @ManyToMany(() => Wish, (wish) => wish.wishlists)
+  @ManyToMany(() => Wish, (wish) => wish.wishlists,
+    {
+      cascade: ['remove', 'update'],
+      onDelete: 'CASCADE',
+    })
+  @JoinTable({
+
+    name: 'wishPartial', // Имя таблицы для связи
+    joinColumn: {
+      name: 'wishId', // Имя колонки для Wish
+      referencedColumnName: 'id', // Ссылка на колонку id в Wish
+    },
+    inverseJoinColumn: {
+      name: 'wishlistId', // Имя колонки для WishList
+      referencedColumnName: 'id', // Ссылка на колонку id в WishList
+    },
+  })
   items: Wish[]
 }

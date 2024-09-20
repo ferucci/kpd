@@ -54,9 +54,6 @@ export class Wish {
 
   @IsEmpty()
   @ManyToMany(() => WishList, (wishlist) => wishlist.items)
-  @JoinTable({
-    name: 'wishPartial',
-  })
   wishlists: WishList[]
 
   @Column({
