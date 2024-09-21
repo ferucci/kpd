@@ -1,7 +1,7 @@
-import { IsNumber, IsString, Length, Min } from 'class-validator';
-import { LENGTH_OF_COLUMNS } from 'src/vars';
+import { IsNumber, IsString, Length, Matches, Min } from 'class-validator';
+import { LENGTH_OF_COLUMNS, URL_REGULAR } from 'src/vars';
 
-export class CopyWishDto {
+export class CreateWishDto {
   @IsString()
   @Length(
     LENGTH_OF_COLUMNS.minWishNameLength,
@@ -13,7 +13,7 @@ export class CopyWishDto {
   link: string;
 
   @IsString()
-  // @Matches(URL_REGULAR)
+  @Matches(URL_REGULAR)
   image: string;
 
   @IsString()
@@ -26,6 +26,4 @@ export class CopyWishDto {
   @IsNumber()
   @Min(LENGTH_OF_COLUMNS.minWishNumLength)
   price: number;
-
-  raised: number;
 }

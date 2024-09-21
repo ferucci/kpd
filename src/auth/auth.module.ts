@@ -10,21 +10,17 @@ import { AuthController } from './auth.controller';
 import { StrategyJWT } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 
-import { PasswordService } from './password.service';
-import { CookieService } from './cookie.service';
-
-
 @Module({
   imports: [
     forwardRef(() => UserModule),
     // Для работы стратегий
     PassportModule,
     JwtModule.registerAsync({
-      useClass: JwtConfigFactory
-    })
+      useClass: JwtConfigFactory,
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, StrategyJWT, JwtConfigFactory],
-  exports: [AuthService]
+  exports: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

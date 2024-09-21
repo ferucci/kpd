@@ -1,12 +1,28 @@
-import { Exclude } from "class-transformer";
-import { IsDate, IsEmail, IsEmpty, IsNotEmpty, IsOptional, IsUrl, Length, MinLength } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm";
+import { Exclude } from 'class-transformer';
+import {
+  IsDate,
+  IsEmail,
+  IsEmpty,
+  IsNotEmpty,
+  IsOptional,
+  IsUrl,
+  Length,
+  MinLength,
+} from 'class-validator';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 
-import { Wish } from "src/wishes/entities/wishes.entity";
-import { Offer } from "src/offers/entities/offer.entity";
-import { WishList } from "src/wishlist/entities/wishlist.entity";
+import { Wish } from 'src/wishes/entities/wishes.entity';
+import { Offer } from 'src/offer/entities/offer.entity';
+import { WishList } from 'src/wishlist/entities/wishlist.entity';
 
-import { LENGTH_OF_COLUMNS, DEFAULT_VALUE } from "src/vars";
+import { LENGTH_OF_COLUMNS, DEFAULT_VALUE } from 'src/vars';
 
 @Entity()
 export class User {
@@ -26,7 +42,7 @@ export class User {
   @Column({ unique: true })
   @Length(
     LENGTH_OF_COLUMNS.minUserNameLength,
-    LENGTH_OF_COLUMNS.maxUserNameLength
+    LENGTH_OF_COLUMNS.maxUserNameLength,
   )
   @IsNotEmpty()
   username: string;
@@ -34,12 +50,12 @@ export class User {
   @Column({ default: DEFAULT_VALUE.about })
   @Length(
     LENGTH_OF_COLUMNS.minUserAboutLength,
-    LENGTH_OF_COLUMNS.maxUserAboutLength
+    LENGTH_OF_COLUMNS.maxUserAboutLength,
   )
   @IsOptional()
   about: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, select: false })
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -62,10 +78,10 @@ export class User {
   // Содержит список подарков, на которые скинулся пользователь
   @IsEmpty()
   @OneToMany(() => Offer, (offer) => offer.user)
-  offers: Offer[]
+  offers: Offer[];
 
   // список вишлистов, которые создал пользователь
   @IsEmpty()
   @OneToMany(() => WishList, (wishlist) => wishlist.owner)
-  wishlist: WishList[]
+  wishlist: WishList[];
 }

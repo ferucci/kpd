@@ -9,6 +9,6 @@ import { UserModule } from 'src/users/user.module';
   imports: [TypeOrmModule.forFeature([Wish]), forwardRef(() => UserModule)],
   controllers: [WishController],
   providers: [WishService],
-  exports: [WishService]
+  exports: [WishService],
 })
-export class WishModule { }
+export class WishModule {}

@@ -1,7 +1,7 @@
-import { IsJWT, IsString } from "class-validator";
+import { IsJWT, IsString } from 'class-validator';
 
 export class SignInUserResponseDto {
   @IsString()
   @IsJWT()
-  access_token: string
+  access_token: string;
 }

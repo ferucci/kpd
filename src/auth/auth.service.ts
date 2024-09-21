@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { verifyHash } from 'src/heplers/hash';
 import { User } from 'src/users/entities/user.entity';
@@ -8,16 +8,16 @@ import { UserService } from 'src/users/user.service';
 export class AuthService {
   constructor(
     private usersService: UserService,
-    private readonly jwtService: JwtService
-  ) { }
+    private readonly jwtService: JwtService,
+  ) {}
 
   async validateUser(username: string, password: string): Promise<any> {
-    const foundUser = await this.usersService.findOne({
+    const user = await this.usersService.findOne({
       select: { username: true, email: true, password: true, id: true },
-      where: { username }
+      where: { username },
     });
-    if (foundUser && (await verifyHash(password, foundUser.password))) {
-      const { password, ...result } = foundUser;
+    if (user && (await verifyHash(password, user.password))) {
+      const { password, ...result } = user;
       return result;
     }
     return null;
@@ -27,7 +27,10 @@ export class AuthService {
     const { username, id: sub } = user;
     // Возвращаю токен
     return {
-      access_token: await this.jwtService.signAsync({ username, sub })
-    }
+      access_token: await this.jwtService.signAsync(
+        { username, sub },
+        { expiresIn: '24h' },
+      ),
+    };
   }
 }

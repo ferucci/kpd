@@ -1,4 +1,4 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateWishDto } from './create-wishes.dto';
-// Делает все поля CreateUserDto не обязательными
-export class UpdateWishDto extends PartialType(CreateWishDto) { }
+import { CreateWishDto } from './create-wish.dto';
+// Делает все поля CreateWishDto не обязательными
+export class UpdateWishDto extends PartialType(CreateWishDto) {}

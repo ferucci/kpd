@@ -3,13 +3,9 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector) { }
-  canActivate(
-    context: ExecutionContext,
-  ): boolean {
-
+  constructor(private reflector: Reflector) {}
+  canActivate(context: ExecutionContext): boolean {
     const roles = this.reflector.get<string[]>('roles', context.getHandler());
-    console.log('roles: ', roles)
     // если у обработчика нет данных о ролях, пропускаем запрос в контроллер
     if (!roles) {
       return true;
@@ -19,6 +15,6 @@ export class RolesGuard implements CanActivate {
     const user = request.user;
 
     // если у пользователя есть хотя бы одна нужная роль, запрос пройдёт дальше
-    return roles.some(role => user.roles.includes(role));
+    return roles.some((role) => user.roles.includes(role));
   }
 }

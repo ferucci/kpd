@@ -18,6 +18,6 @@ import { WishlistModule } from 'src/wishlist/wishlist.module';
   ],
   controllers: [UserController],
   providers: [UserService],
-  exports: [UserService]
+  exports: [UserService],
 })
-export class UserModule { }
+export class UserModule {}
